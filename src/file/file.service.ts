@@ -7,19 +7,22 @@ export class FileService {
 
   async saveFile(file) {
     const id = uuid()
-    const path = 'src/tmp/' + id
-    let fileStream = createWriteStream(path)
-    fileStream.write(file[0].buffer)
-    fileStream.end()
+    const path = '/tmp/' + id
+    await new Promise<any>((resolve) => {
+      let fileStream = createWriteStream(path)
+      fileStream.write(file.buffer)
+      fileStream.end()
+      fileStream.on('finish', resolve)
+    })
     return {
       id,
-      originalname: file[0].originalname,
-      size: file[0].size
+      originalname: file.originalname,
+      size: file.size
       }
     
   }
 
 async sendFile(id, res) {
-     res.download('src/tmp/' + id)
+     res.download('/tmp/' + id)
 }
 }
